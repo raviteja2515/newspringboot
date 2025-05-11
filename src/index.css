@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: 226 92% 21%;
+    --primary-light: 226 92% 31%;
+    --secondary: 204 57% 52%;
+    --accent: 358 75% 59%;
+    --success: 142 76% 36%;
+    --warning: 35 92% 65%;
+    --error: 0 84% 60%;
+    --background: 210 20% 98%;
+    --foreground: 222 47% 11%;
+  }
+
+  body {
+    @apply bg-[#f8fafc] text-slate-900 font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+    line-height: 1.2;
+  }
+
+  h1 {
+    @apply text-4xl sm:text-5xl mb-6;
+  }
+
+  h2 {
+    @apply text-3xl sm:text-4xl mb-4;
+  }
+
+  h3 {
+    @apply text-2xl sm:text-3xl mb-3;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--primary))] focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-[hsl(var(--background))];
+  }
+  
+  .btn-primary {
+    @apply bg-blue-900 text-white hover:bg-blue-800 active:bg-blue-950;
+  }
+  
+  .btn-secondary {
+    @apply bg-blue-500 text-white hover:bg-blue-400 active:bg-blue-600;
+  }
+
+  .btn-outline {
+    @apply border border-[hsl(var(--primary)/0.2)] hover:bg-[hsl(var(--primary)/0.1)] hover:text-[hsl(var(--primary))];
+  }
+  
+  .card {
+    @apply rounded-lg border bg-white shadow-sm transition-all;
+  }
+
+  .input {
+    @apply flex h-10 w-full rounded-md border border-[hsl(var(--primary)/0.2)] bg-[hsl(var(--background))] px-3 py-2 text-sm ring-offset-[hsl(var(--background))] file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-[hsl(var(--foreground)/0.6)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--primary))] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .transition-scale {
+    @apply transition-transform duration-300 hover:scale-105;
+  }
+}
