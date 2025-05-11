@@ -1,5 +1,3 @@
-import { createClient } from "npm:@supabase/supabase-js@2.39.0";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { JSZip } from "npm:jszip@3.10.1";
 
 const corsHeaders = {
@@ -8,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -34,7 +32,7 @@ serve(async (req) => {
     zip.file("src/main/resources/application.properties", appProperties);
 
     // Generate ZIP file
-    const zipContent = await zip.generateAsync({ type: "uint8array" });
+    const zipContent = await zip.generateAsync({ type: "blob" });
 
     return new Response(zipContent, {
       headers: {
@@ -44,6 +42,7 @@ serve(async (req) => {
       },
     });
   } catch (error) {
+    console.error('Error generating project:', error);
     return new Response(
       JSON.stringify({ error: "Failed to generate project" }),
       {
