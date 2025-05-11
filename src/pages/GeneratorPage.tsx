@@ -131,16 +131,20 @@ const GeneratorPage: React.FC = () => {
       dependencies: Array.from(formData.dependencies)
     };
 
-    // Create a zip file with the project structure
-    const response = await fetch('/api/generate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(projectData)
-    });
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(projectData)
+      });
 
-    if (response.ok) {
+      if (!response.ok) {
+        throw new Error('Failed to generate project');
+      }
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -150,6 +154,9 @@ const GeneratorPage: React.FC = () => {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error generating project:', error);
+      alert('Failed to generate project. Please try again.');
     }
   };
 
