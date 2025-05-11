@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Package, Database, Code, Download } from 'lucide-react';
+import { Package, Database, Code, Download, FileTree, Eye } from 'lucide-react';
 
 interface Step {
   title: string;
@@ -67,7 +67,9 @@ const steps: Step[] = [
   { title: 'Project Setup', icon: <Package size={24} /> },
   { title: 'Database Config', icon: <Database size={24} /> },
   { title: 'Schema Design', icon: <Code size={24} /> },
-  { title: 'Generate & Download', icon: <Download size={24} /> },
+  { title: 'Dependencies', icon: <FileTree size={24} /> },
+  { title: 'Preview', icon: <Eye size={24} /> },
+  { title: 'Generate', icon: <Download size={24} /> }
 ];
 
 const GeneratorPage: React.FC = () => {
@@ -158,6 +160,74 @@ const GeneratorPage: React.FC = () => {
       console.error('Error generating project:', error);
       alert('Failed to generate project. Please try again.');
     }
+  };
+
+  const renderProjectPreview = () => {
+    return (
+      <div className="space-y-6">
+        <h3 className="text-xl font-semibold mb-4">Project Preview</h3>
+        <div className="bg-gray-900 text-white p-6 rounded-lg font-mono text-sm overflow-auto">
+          <pre className="whitespace-pre-wrap">
+{`${formData.artifactId}/
+├── pom.xml
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── ${formData.groupId.replace(/\./g, '/')}/
+│   │   │       └── Application.java
+│   │   └── resources/
+│   │       └── application.properties
+│   └── test/
+│       └── java/
+│           └── ${formData.groupId.replace(/\./g, '/')}/
+│               └── ApplicationTests.java`}
+          </pre>
+        </div>
+        
+        <div className="space-y-4">
+          <div className="bg-white p-4 rounded-lg border">
+            <h4 className="font-semibold mb-2">Project Details</h4>
+            <dl className="grid grid-cols-2 gap-2">
+              <dt className="text-gray-600">Group ID:</dt>
+              <dd>{formData.groupId}</dd>
+              <dt className="text-gray-600">Artifact ID:</dt>
+              <dd>{formData.artifactId}</dd>
+              <dt className="text-gray-600">Java Version:</dt>
+              <dd>{formData.javaVersion}</dd>
+              <dt className="text-gray-600">Spring Boot:</dt>
+              <dd>{formData.springBootVersion}</dd>
+            </dl>
+          </div>
+
+          <div className="bg-white p-4 rounded-lg border">
+            <h4 className="font-semibold mb-2">Dependencies</h4>
+            <ul className="list-disc list-inside space-y-1">
+              {Array.from(formData.dependencies).map(dep => (
+                <li key={dep} className="text-gray-700">{dep}</li>
+              ))}
+            </ul>
+          </div>
+
+          {formData.selectedDatabase && (
+            <div className="bg-white p-4 rounded-lg border">
+              <h4 className="font-semibold mb-2">Database Configuration</h4>
+              <dl className="grid grid-cols-2 gap-2">
+                <dt className="text-gray-600">Database:</dt>
+                <dd>{formData.selectedDatabase.name}</dd>
+                <dt className="text-gray-600">URL:</dt>
+                <dd className="break-all">{formData.databaseConfig.url}</dd>
+                {formData.databaseConfig.username && (
+                  <>
+                    <dt className="text-gray-600">Username:</dt>
+                    <dd>{formData.databaseConfig.username}</dd>
+                  </>
+                )}
+              </dl>
+            </div>
+          )}
+        </div>
+      </div>
+    );
   };
 
   const renderStepContent = () => {
@@ -410,6 +480,26 @@ const GeneratorPage: React.FC = () => {
             </div>
           </div>
         );
+      case 4:
+        return renderProjectPreview();
+      case 5:
+        return (
+          <div className="space-y-6">
+            <h3 className="text-xl font-semibold mb-4">Generate Project</h3>
+            <div className="text-center">
+              <button
+                onClick={generateProject}
+                className="btn btn-primary text-lg px-8 py-3"
+              >
+                <Download size={20} className="mr-2" />
+                Download Project
+              </button>
+              <p className="mt-4 text-gray-600">
+                Your Spring Boot project will be downloaded as a ZIP file.
+              </p>
+            </div>
+          </div>
+        );
       default:
         return null;
     }
@@ -482,13 +572,9 @@ const GeneratorPage: React.FC = () => {
           </button>
           <button
             className="btn btn-primary"
-            onClick={() =>
-              currentStep === steps.length - 1
-                ? generateProject()
-                : setCurrentStep(Math.min(steps.length - 1, currentStep + 1))
-            }
+            onClick={() => setCurrentStep(Math.min(steps.length - 1, currentStep + 1))}
           >
-            {currentStep === steps.length - 1 ? 'Generate Project' : 'Next'}
+            {currentStep === steps.length - 1 ? 'Finish' : 'Next'}
           </button>
         </div>
       </div>
