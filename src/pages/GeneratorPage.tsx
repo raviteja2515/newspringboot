@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Package, Database, Code, Download, FileTree, Eye } from 'lucide-react';
+import { Package, Database, Code, Download, File as FileTree, Eye } from 'lucide-react';
 
 interface Step {
   title: string;
